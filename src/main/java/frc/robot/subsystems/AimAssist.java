@@ -14,15 +14,13 @@ import edu.wpi.first.wpilibj.Joystick;
 public class AimAssist extends SubsystemBase {
     private MecanumDrive drive;
     private Map<String, NetworkTableEntry> limelightEntries;
-    private Double limelightLastSeen;
     public Boolean clearToShoot = false;
     private Consumer<Double> shootMethod;
 
     // Config (These values may need to be changed)
     private NetworkTable limelightTable = (NetworkTableInstance.getDefault()).getTable("limelight");
-    private Double noTargetDefaultPos = 0.5;
+    private Double noTargetDefaultPos = 50.0;
     private Double acceptableError = 5.0;
-    private Double smallestPosCacheError = 20.0;
     private PIDController pid = new PIDController(0.35, 0.25, 0.1);
     private JoystickButton button = new JoystickButton(new Joystick(2), 2);
     public double maxSpeed = 0.4;
@@ -40,13 +38,6 @@ public class AimAssist extends SubsystemBase {
     // Limelight Function(s)
     private boolean limelightHasTarget() {
         return (limelightEntries.get("tv").getDouble(0.0) == 1.0);
-    }
-
-    // Refresh & Run
-    public void refresh() {
-        if (limelightHasTarget()) {
-            limelightLastSeen = limelightEntries.get("tx").getDouble(noTargetDefaultPos);
-        }
     }
 
     // Shoot
@@ -70,8 +61,6 @@ public class AimAssist extends SubsystemBase {
 
         if (limelightHasTarget()) {
             targetX = limelightEntries.get("tx").getDouble(noTargetDefaultPos);
-        } else if (limelightLastSeen != null && (limelightLastSeen > smallestPosCacheError || limelightLastSeen < -smallestPosCacheError)) {
-            targetX = limelightLastSeen;
         } else {
             targetX = noTargetDefaultPos;
         }
