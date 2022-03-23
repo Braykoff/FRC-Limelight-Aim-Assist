@@ -39,11 +39,6 @@ public class Robot extends TimedRobot {
     aimAssist = new AimAssist(mecDrive, this::shoot);
   }
 
-  @Override
-  public void robotPeriodic() {
-    aimAssist.refresh();
-  }
-
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
